@@ -59,13 +59,12 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 	//2.业务逻辑处理
-	if err := logic.Login(p); err != nil {
+	token, err := logic.Login(p)
+	if err != nil {
 		zap.L().Error("login.Login failed", zap.Error(err))
 		ResponseError(c, CodeInvalidPassword)
 		return
 	}
 	//3.返回响应
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "登陆成功",
-	})
+	ResponseSuccess(c, token)
 }
