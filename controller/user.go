@@ -16,9 +16,7 @@ func SignUpHandler(c *gin.Context) {
 	if err := c.ShouldBind(p); err != nil {
 		//请求参数有误，直接返回响应
 		zap.L().Error("SignUp Shouldn't Bind Parameters Error", zap.Error(err))
-		c.JSON(http.StatusOK, gin.H{
-			"msg": "请求参数有误",
-		})
+		ResponseError(c, CodeInvalidParam)
 		return
 	}
 	//2.业务处理
@@ -46,6 +44,7 @@ func LoginHandler(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
 				"msg": err.Error(),
 			})
+			ResponseError(c, CodeInvalidParam)
 			return
 		}
 		//TODO 先不加翻译校验
@@ -55,18 +54,14 @@ func LoginHandler(c *gin.Context) {
 		//使用到errs
 		fmt.Println(errs)
 		if errs != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"msg": errs.Error(),
-			})
+			ResponseErrorWithMsg(c, CodeInvalidParam, errs.Error())
 		}
 		return
 	}
 	//2.业务逻辑处理
 	if err := logic.Login(p); err != nil {
 		zap.L().Error("login.Login failed", zap.Error(err))
-		c.JSON(http.StatusOK, gin.H{
-			"msg": "用户名或密码错误",
-		})
+		ResponseError(c, CodeInvalidPassword)
 		return
 	}
 	//3.返回响应
