@@ -16,10 +16,10 @@ func SetupRouter() *gin.Engine {
 	v1 := r.Group("/api/v1")
 	v1.POST("/signup", controller.SignUpHandler)
 	v1.POST("/login", controller.LoginHandler)
-
-	v1.GET("/ping", middlewares.JWTAuthMiddleware(), func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
-	})
+	v1.Use(middlewares.JWTAuthMiddleware())
+	{
+		v1.GET("/community", controller.CommunityHandler)
+	}
 
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
