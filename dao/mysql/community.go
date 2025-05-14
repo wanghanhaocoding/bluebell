@@ -16,3 +16,10 @@ func GetCommunityList() (communityList []*models.Community, err error) {
 	}
 	return
 }
+
+func GetCommunityDetail(id int64) (communityDetail *models.CommunityDetail, err error) {
+	communityDetail = new(models.CommunityDetail)
+	sqlStr := "select community_id,community_name,introduction,create_time from community where community_id=?"
+	err = db.Get(communityDetail, sqlStr, id)
+	return communityDetail, err
+}
