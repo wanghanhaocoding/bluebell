@@ -56,5 +56,12 @@ func Login(user *models.User) (err error) {
 		return errors.New("密码错误")
 	}
 	return
+}
 
+// GetUserById 根据id获取用户信息
+func GetUserById(uid int64) (user *models.User, err error) {
+	user = new(models.User)
+	sqlStr := `select user_id,username from user where user_id = ?`
+	err = db.Get(user, sqlStr, uid)
+	return
 }
