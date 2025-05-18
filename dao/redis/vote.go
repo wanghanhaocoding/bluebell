@@ -34,16 +34,16 @@ func VoteForPost(userID, postID string, value float64) error {
 	}
 	diff := math.Abs(ov - value) //计算两次投票的差值
 	pipeline := client.TxPipeline()
-	pipeline.ZIncrBy(getRedisKey(KeyPostScoreZSet), dir*diff*scorePerVote, postID).Result()
+	pipeline.ZIncrBy(getRedisKey(KeyPostScoreZSet), dir*diff*scorePerVote, postID)
 
 	// 3.记录用户为该帖子投票的数据
 	if value == 0 {
-		pipeline.ZRem(getRedisKey(KeyPostVatedSetPF+postID), postID).Result()
+		pipeline.ZRem(getRedisKey(KeyPostVatedSetPF+postID), userID)
 	} else {
 		pipeline.ZAdd(getRedisKey(KeyPostVatedSetPF+postID), redis.Z{
 			Score:  value, // 赞成票还是反对票
 			Member: userID,
-		}).Result()
+		})
 	}
 	_, err := pipeline.Exec()
 	return err
